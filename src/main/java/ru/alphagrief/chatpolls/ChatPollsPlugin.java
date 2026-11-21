@@ -32,11 +32,11 @@ public final class ChatPollsPlugin extends JavaPlugin implements Listener {
     private int correct = -1;
     private boolean active;
     private long pollId;
-    private int presetCursor;
+    private int presetCursor;\n    private PollCreationWizard creationWizard;
 
     @Override public void onEnable() {
         saveDefaultConfig();
-        getServer().getPluginManager().registerEvents(this, this);\n        getServer().getPluginManager().registerEvents(new PollCreationWizard(this), this);
+        getServer().getPluginManager().registerEvents(this, this);\n        creationWizard = new PollCreationWizard(this);\n        getServer().getPluginManager().registerEvents(creationWizard, this);
         dataFile = new File(getDataFolder(), "data.yml");
         loadData();
         long ticks = Math.max(1, getConfig().getLong("settings.auto-interval-minutes", 60)) * 60L * 20L;
