@@ -32,11 +32,14 @@ public final class ChatPollsPlugin extends JavaPlugin implements Listener {
     private int correct = -1;
     private boolean active;
     private long pollId;
-    private int presetCursor;\n    private PollCreationWizard creationWizard;
+    private int presetCursor;
+    private PollCreationWizard creationWizard;
 
     @Override public void onEnable() {
         saveDefaultConfig();
-        getServer().getPluginManager().registerEvents(this, this);\n        creationWizard = new PollCreationWizard(this);\n        getServer().getPluginManager().registerEvents(creationWizard, this);
+        getServer().getPluginManager().registerEvents(this, this);
+        creationWizard = new PollCreationWizard(this);
+        getServer().getPluginManager().registerEvents(creationWizard, this);
         dataFile = new File(getDataFolder(), "data.yml");
         loadData();
         long ticks = Math.max(1, getConfig().getLong("settings.auto-interval-minutes", 60)) * 60L * 20L;
@@ -68,10 +71,11 @@ public final class ChatPollsPlugin extends JavaPlugin implements Listener {
 
     private void openAdmin(Player p) {
         Inventory inv = Bukkit.createInventory(null, 27, color("&0AlphaGrief &8• &0Управление"));
-        item(inv, 10, Material.LIME_DYE, "&aСоздать Да/Нет", "&7Быстрый опрос");
-        item(inv, 12, Material.BOOK, "&eЗапустить пресет", "&7Случайный вопрос из 10");
-        item(inv, 14, Material.PAPER, "&bРезультаты", "&7Посмотреть статистику");
-        item(inv, 16, Material.BARRIER, "&cЗавершить опрос", "&7Закрыть текущий опрос");
+        item(inv, 10, Material.WRITABLE_BOOK, "&aСоздать свой опрос", "&7Свой вопрос и варианты ответа");
+        item(inv, 12, Material.LIME_DYE, "&aБыстрый опрос Да/Нет", "&7Стандартный вопрос");
+        item(inv, 14, Material.BOOK, "&eЗапустить пресет", "&7Случайный вопрос из 10");
+        item(inv, 16, Material.PAPER, "&bРезультаты", "&7Посмотреть статистику");
+        item(inv, 20, Material.BARRIER, "&cЗавершить опрос", "&7Закрыть текущее голосование");
         item(inv, 22, Material.ARROW, "&7Назад", "&7В главное меню");
         p.openInventory(inv);
     }
@@ -110,10 +114,11 @@ public final class ChatPollsPlugin extends JavaPlugin implements Listener {
             else if (slot == 15) openResults(p);
             else if (slot == 22 && p.hasPermission("chatpolls.admin")) openAdmin(p);
         } else if (title.equals(color("&0AlphaGrief &8• &0Управление"))) {
-            if (slot == 10) { createPoll("Нравится ли тебе обновление AlphaGrief?", List.of("Да", "Нет"), -1); p.closeInventory(); msg(p, "poll-created"); announce(); }
-            else if (slot == 12) { startAutomaticPoll(); p.closeInventory(); }
-            else if (slot == 14) openResults(p);
-            else if (slot == 16) { endPoll(); p.closeInventory(); }
+            if (slot == 10) { creationWizard.begin(p); }
+            else if (slot == 12) { createPoll("Нравится ли тебе обновление AlphaGrief?", List.of("Да", "Нет"), -1); p.closeInventory(); msg(p, "poll-created"); announce(); }
+            else if (slot == 14) { startAutomaticPoll(); p.closeInventory(); }
+            else if (slot == 16) openResults(p);
+            else if (slot == 20) { endPoll(); p.closeInventory(); }
             else if (slot == 22) openMain(p);
         } else if (title.equals(color("&0Голосование"))) {
             if (slot >= 10 && slot < 10 + options.size() && active) castVote(p, slot - 10);
@@ -138,7 +143,12 @@ public final class ChatPollsPlugin extends JavaPlugin implements Listener {
         saveData();
     }
 
-    public void publishCustomPoll(String q, List<String> opts) {\n        createPoll(q, opts, -1);\n        announce();\n    }\n\n    private void createPoll(String q, List<String> opts, int answer) {
+    public void publishCustomPoll(String q, List<String> opts) {
+        createPoll(q, opts, -1);
+        announce();
+    }
+
+    private void createPoll(String q, List<String> opts, int answer) {
         question = q; options = new ArrayList<>(opts); correct = answer; active = true; pollId++;
         votes.clear(); voted.clear(); saveData();
     }
