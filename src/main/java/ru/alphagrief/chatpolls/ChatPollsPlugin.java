@@ -36,7 +36,7 @@ public final class ChatPollsPlugin extends JavaPlugin implements Listener {
 
     @Override public void onEnable() {
         saveDefaultConfig();
-        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(this, this);\n        getServer().getPluginManager().registerEvents(new PollCreationWizard(this), this);
         dataFile = new File(getDataFolder(), "data.yml");
         loadData();
         long ticks = Math.max(1, getConfig().getLong("settings.auto-interval-minutes", 60)) * 60L * 20L;
@@ -138,7 +138,7 @@ public final class ChatPollsPlugin extends JavaPlugin implements Listener {
         saveData();
     }
 
-    private void createPoll(String q, List<String> opts, int answer) {
+    public void publishCustomPoll(String q, List<String> opts) {\n        createPoll(q, opts, -1);\n        announce();\n    }\n\n    private void createPoll(String q, List<String> opts, int answer) {
         question = q; options = new ArrayList<>(opts); correct = answer; active = true; pollId++;
         votes.clear(); voted.clear(); saveData();
     }
