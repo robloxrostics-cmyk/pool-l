@@ -1,0 +1,15 @@
+name: ChatPolls
+version: 1.0.0
+main: ru.alphagrief.chatpolls.ChatPollsPlugin
+api-version: '1.21'
+author: AlphaGrief
+description: GUI polls, quizzes and automatic community voting
+commands:
+  polls:
+    description: Open poll menu
+    usage: /polls
+    aliases: [poll, vote]
+permissions:
+  chatpolls.admin:
+    description: Manage polls
+    default: op
