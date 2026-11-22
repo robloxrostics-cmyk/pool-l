@@ -1,15 +1,20 @@
-name: ChatPolls
+
+name: AlphaChatGuard
 version: 1.0.0
-main: ru.alphagrief.chatpolls.ChatPollsPlugin
+main: ru.alphagrief.alphachatguard.AlphaChatGuard
 api-version: '1.21'
 author: AlphaGrief
-description: GUI polls, quizzes and automatic community voting
+description: Anti-Advertisement and Anti-Spam
+
 commands:
-  polls:
-    description: Open poll menu
-    usage: /polls
-    aliases: [poll, vote]
+  acg:
+    description: AlphaChatGuard management
+    usage: /acg reload
+
 permissions:
-  chatpolls.admin:
-    description: Manage polls
+  alphachatguard.bypass:
+    description: Bypass chat protection
+    default: op
+  alphachatguard.admin:
+    description: Manage AlphaChatGuard
     default: op
